@@ -13,7 +13,7 @@ using Microsoft.Extensions.Options;
 
 namespace SocialCrunch
 {
-    public class Startup
+    public partial class Startup
     {
         public Startup(IConfiguration configuration)
         {

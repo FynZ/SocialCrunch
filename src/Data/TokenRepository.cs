@@ -35,7 +35,7 @@ namespace Data
 
                 con.Open();
 
-                return con.Query<Token>(sql, new {Type = (int)type});
+                return await con.QueryAsync<Token>(sql, new {Type = (int)type});
             }
         }
     }

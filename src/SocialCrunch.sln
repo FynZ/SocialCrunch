@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2048
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialCrunch", "SocialCrunch\SocialCrunch.csproj", "{6D76A887-11A4-4394-AFEE-64F7525EEDC7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SocialCrunch", "SocialCrunch\SocialCrunch.csproj", "{6D76A887-11A4-4394-AFEE-64F7525EEDC7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Data\Data.csproj", "{CA934B10-13AA-4E49-9F6C-803CC28BAF78}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data", "Data\Data.csproj", "{CA934B10-13AA-4E49-9F6C-803CC28BAF78}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "Models\Models.csproj", "{F62C1D7E-7EBA-4CDB-8A86-C7EAAB07F271}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "Models\Models.csproj", "{F62C1D7E-7EBA-4CDB-8A86-C7EAAB07F271}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Business", "Business\Business.csproj", "{2F6BD5AD-1BD2-4437-9088-D289973ED6BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Business", "Business\Business.csproj", "{2F6BD5AD-1BD2-4437-9088-D289973ED6BE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{AA80B681-81A7-4FD1-B0A4-D1143E6D294B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{2F6BD5AD-1BD2-4437-9088-D289973ED6BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F6BD5AD-1BD2-4437-9088-D289973ED6BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F6BD5AD-1BD2-4437-9088-D289973ED6BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA80B681-81A7-4FD1-B0A4-D1143E6D294B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA80B681-81A7-4FD1-B0A4-D1143E6D294B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA80B681-81A7-4FD1-B0A4-D1143E6D294B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA80B681-81A7-4FD1-B0A4-D1143E6D294B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
