@@ -1,0 +1,53 @@
+# Run this command in PowerShell before running this docker-compose:
+#   $Env:COMPOSE_CONVERT_WINDOWS_PATHS=1
+
+version: '3'
+services:
+  portainer:
+    image: portainer/portainer
+    container_name: portainer
+    command: -H unix:///var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    ports:
+      - "9000:9000"
+
+  postgres:
+    image: postgres
+    container_name: postgres
+    hostname: postgres
+    ports:
+      - "5432:5432"
+    depends_on:
+      - "portainer"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: azerty1234
+      POSTGRES_DB: pony
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    ports: 
+      - "9300:80"
+    depends_on:
+      - "postgres"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@pony.com
+      PGADMIN_DEFAULT_PASSWORD: azerty1234
+
+  # Once logged to pgadmin with your defined credentials
+  # Go to : Right click {Servers} -> Create -> Server
+  #   General : 
+  #     Name                => Whatever                 (doesn't matter)
+  #   Connection
+  #     Host name/address   => {postgres:hostname}      (default: postgres)
+  #     Port                => {postgres:internalPort}  (default: 5432)
+
+  #elasticsearch:
+
+  #kibana:
+
+volumes:
+  portainer_data:
