@@ -6,6 +6,7 @@ services:
   portainer:
     image: portainer/portainer
     container_name: portainer
+    restart: always
     command: -H unix:///var/run/docker.sock
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -29,6 +30,7 @@ services:
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin
+    restart: always
     ports: 
       - "9300:80"
     depends_on:
@@ -46,8 +48,21 @@ services:
   #     Port                => {postgres:internalPort}  (default: 5432)
 
   #elasticsearch:
+  elasticsearch:
+    image: elasticsearch:6.5.1
+    container_name: elasticsearch
+    ports:
+      - "9200:9200"
 
   #kibana:
+  kibana:
+    image: kibana:6.5.1
+    container_name: kibana
+    restart: always
+    ports:
+      - "5601:5601"
+    depends_on:
+      - "elasticsearch"
 
 volumes:
   portainer_data:
