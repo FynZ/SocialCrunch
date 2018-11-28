@@ -1,0 +1,260 @@
+﻿<?xml version="1.0"?>
+<doc>
+  <assembly>
+    <name>SocialCrunch</name>
+  </assembly>
+  <members>
+    <member name="M:SocialCrunch.Controllers.SampleController.Default">
+      <summary>
+        Returns a salutation to the world!
+      </summary>
+      <returns></returns>
+    </member>
+    <member name="T:SocialCrunch.Infrastructure.DataAnnotationsMetadataProvider">
+      <summary>
+        An implementation of <see cref="T:Microsoft.AspNetCore.Mvc.ModelBinding.Metadata.IValidationMetadataProvider"/> for DataAnnotations.
+      </summary>
+    </member>
+    <member name="F:SocialCrunch.Infrastructure.DataAnnotationsMetadataProvider.KeyPrefix">
+      <summary>
+        Returns the resource message key prefix for data annotations.
+      </summary>
+    </member>
+    <member name="P:SocialCrunch.Infrastructure.DataAnnotationsMetadataProvider.ErrorMessageResourceType">
+      <summary>
+        Gets the type of the ressource message.
+      </summary>
+    </member>
+    <member name="M:SocialCrunch.Infrastructure.DataAnnotationsMetadataProvider.CreateValidationMetadata(Microsoft.AspNetCore.Mvc.ModelBinding.Metadata.ValidationMetadataProviderContext)">
+      <inheritdoc />
+    </member>
+    <member name="T:SocialCrunch.Infrastructure.InvalidModelStateException">
+      <summary>
+        Exception raised when an invalid model state is detected.
+      </summary>
+    </member>
+    <member name="M:SocialCrunch.Infrastructure.InvalidModelStateException.#ctor(Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary)">
+      <summary>
+        Initializes a new instance of the <see cref="T:SocialCrunch.Infrastructure.InvalidModelStateException"/> class.
+      </summary>
+      <param name="modelState"> The invalid model state. </param>
+    </member>
+    <member name="P:SocialCrunch.Infrastructure.InvalidModelStateException.Code">
+      <summary>
+        Error code
+      </summary>
+    </member>
+    <member name="P:SocialCrunch.Infrastructure.InvalidModelStateException.ModelState">
+      <summary>
+        The invalid model state.
+      </summary>
+    </member>
+    <member name="M:SocialCrunch.Infrastructure.InvalidModelStateException.ToString">
+      <inheritdoc />
+    </member>
+    <member name="T:SocialCrunch.Infrastructure.ResX">
+      <summary>
+        A strongly-typed resource class, for looking up localized strings, etc.
+      </summary>
+    </member>
+    <member name="P:SocialCrunch.Infrastructure.ResX.ResourceManager">
+      <summary>
+        Returns the cached ResourceManager instance used by this class.
+      </summary>
+    </member>
+    <member name="P:SocialCrunch.Infrastructure.ResX.Culture">
+      <summary>
+        Overrides the current thread's CurrentUICulture property for all
+        resource lookups using this strongly typed resource class.
+      </summary>
+    </member>
+    <member name="P:SocialCrunch.Infrastructure.ResX.DataAnnotations_CompareAttribute">
+      <summary>
+        Looks up a localized string similar to &apos;{0}&apos; and &apos;{1}&apos; do not match..
+      </summary>
+    </member>
+    <member name="P:SocialCrunch.Infrastructure.ResX.DataAnnotations_EmailAddressAttribute">
+      <summary>
+        Looks up a localized string similar to The {0} field is not a valid e-mail address..
+      </summary>
+    </member>
+    <member name="P:SocialCrunch.Infrastructure.ResX.DataAnnotations_FileExtensionsAttribute">
+      <summary>
+        Looks up a localized string similar to The {0} field only accepts files with the following extensions: {1}.
+      </summary>
+    </member>
+    <member name="P:SocialCrunch.Infrastructure.ResX.DataAnnotations_MaxLengthAttribute">
+      <summary>
+        Looks up a localized string similar to The field {0} must be a string or array type with a maximum length of &apos;{1}&apos;..
+      </summary>
+    </member>
+    <member name="P:SocialCrunch.Infrastructure.ResX.DataAnnotations_MinLengthAttribute">
+      <summary>
+        Looks up a localized string similar to The field {0} must be a string or array type with a minimum length of &apos;{1}&apos;..
+      </summary>
+    </member>
+    <member name="P:SocialCrunch.Infrastructure.ResX.DataAnnotations_PhoneAttribute">
+      <summary>
+        Looks up a localized string similar to The {0} field is not a valid phone number..
+      </summary>
+    </member>
+    <member name="P:SocialCrunch.Infrastructure.ResX.DataAnnotations_RangeAttribute">
+      <summary>
+        Looks up a localized string similar to The field {0} must be between {1} and {2}..
+      </summary>
+    </member>
+    <member name="P:SocialCrunch.Infrastructure.ResX.DataAnnotations_RegularExpressionAttribute">
+      <summary>
+        Looks up a localized string similar to The field {0} must match the regular expression &apos;{1}&apos;..
+      </summary>
+    </member>
+    <member name="P:SocialCrunch.Infrastructure.ResX.DataAnnotations_RequiredAttribute">
+      <summary>
+        Looks up a localized string similar to The {0} field is required..
+      </summary>
+    </member>
+    <member name="P:SocialCrunch.Infrastructure.ResX.DataAnnotations_StringLengthAttribute">
+      <summary>
+        Looks up a localized string similar to The {0} must be at maximum {1} characters long..
+      </summary>
+    </member>
+    <member name="P:SocialCrunch.Infrastructure.ResX.DataAnnotations_StringLengthAttribute_IncludingMinimum">
+      <summary>
+        Looks up a localized string similar to The {0} must be at least {2} and at maximum {1} characters long..
+      </summary>
+    </member>
+    <member name="P:SocialCrunch.Infrastructure.ResX.DataAnnotations_UrlAttribute">
+      <summary>
+        Looks up a localized string similar to The {0} field is not a valid fully-qualified http, https, or ftp URL..
+      </summary>
+    </member>
+    <member name="P:SocialCrunch.Infrastructure.ResX.INVALID_MODEL_STATE_001">
+      <summary>
+        Looks up a localized string similar to Data validation failed..
+      </summary>
+    </member>
+    <member name="T:SocialCrunch.Infrastructure.SerilogMiddleware">
+      <summary>
+        Logging middleware based on Serilog.
+      </summary>
+    </member>
+    <member name="M:SocialCrunch.Infrastructure.SerilogMiddleware.#ctor(Microsoft.AspNetCore.Http.RequestDelegate,Microsoft.Extensions.Configuration.IConfiguration)">
+      <summary>
+        Initializes a new instance of the <see cref="T:SocialCrunch.Infrastructure.SerilogMiddleware"/> class.
+      </summary>
+      <param name="next">Next request delegate in the pipeline.</param>
+      <param name="configuration">
+        Set of key/value application configuration properties.
+        When EnableHttpRequestBodyLogging == true, log the <see cref="P:Microsoft.AspNetCore.Http.HttpRequest.Body"/>, otherwise not. Default: true.
+      </param>
+    </member>
+    <member name="M:SocialCrunch.Infrastructure.SerilogMiddleware.Invoke(Microsoft.AspNetCore.Http.HttpContext)">
+      <summary>
+        Middleware core implementation.
+      </summary>
+      <param name="httpContext">The current HTTP context.</param>
+      <returns>Next task in the pipeline.</returns>
+    </member>
+    <member name="M:SocialCrunch.Infrastructure.SerilogMiddleware.CreateEnrichedLoggerAsync(Microsoft.AspNetCore.Http.HttpRequest)">
+      <summary>
+        Creates a logger enriched with additionnal data from the <paramref name="request"/>.
+      </summary>
+      <remarks> If an exception occurs, it returns a simple, not enriched, valid logger. </remarks>
+      <param name="request"> The current http request. </param>
+      <returns> Always returns a new valid logger. </returns>
+    </member>
+    <member name="M:SocialCrunch.Infrastructure.Services.Settings.CryptographyTools.Encrypt(System.String,System.String)">
+      <summary>
+        Encrypts the plainText input using the given Key.
+        A 128 bit random salt will be generated and prepended to the ciphertext before it is base64 encoded.
+        A 16 bit random Initialization Vector will also be generated prepended to the ciphertext before it is base64
+        encoded.
+      </summary>
+      <param name="plainText">The plain text to encrypt.</param>
+      <param name="key">The plain text encryption key.</param>
+      <returns>The salt, IV and the ciphertext, Base64 encoded.</returns>
+    </member>
+    <member name="M:SocialCrunch.Infrastructure.Services.Settings.CryptographyTools.Decrypt(System.String,System.String)">
+      <summary>
+        Decrypts the ciphertext using the Key.
+      </summary>
+      <param name="ciphertext">The ciphertext to decrypt.</param>
+      <param name="key">The plain text encryption key.</param>
+      <returns>The decrypted text.</returns>
+    </member>
+    <member name="T:SocialCrunch.Program">
+      <summary>
+        Set of extension methods to wire up serilog.
+      </summary>
+      <summary>
+        This class provides all Metrics specific initialization logic. To remove the service just remove this file.
+      </summary>
+      <summary>
+        Entry point of the program.
+      </summary>
+    </member>
+    <member name="M:SocialCrunch.Program.Main(System.String[])">
+      <summary>
+        Program entry point.
+      </summary>
+      <param name="args">Command line arguments.</param>
+      <returns> Program return value. </returns>
+    </member>
+    <member name="P:SocialCrunch.Program.Configuration">
+      <summary>
+        Returns the application configuration store.
+      </summary>
+    </member>
+    <member name="M:SocialCrunch.Program.IntializeLogging">
+      <summary>
+        Adds structured logging for the service.
+      </summary>
+    </member>
+    <member name="T:SocialCrunch.Startup">
+      <summary>
+        Serilog specific middleware
+      </summary>
+      <summary>
+        Main entry point for application configuration.
+      </summary>
+    </member>
+    <member name="M:SocialCrunch.Startup.#ctor(Microsoft.Extensions.Configuration.IConfiguration,Microsoft.AspNetCore.Hosting.IHostingEnvironment)">
+      <summary>
+        This method gets called by the runtime. Entry point to load configuration.
+      </summary>
+      <param name="configuration">Application configuration store.</param>
+      <param name="env"> Provides information about the web hosting environment an application is running in. </param>
+    </member>
+    <member name="P:SocialCrunch.Startup.Configuration">
+      <summary>
+        Gets a reference on the ASPNETCORE configuration.
+      </summary>
+    </member>
+    <member name="P:SocialCrunch.Startup.Env">
+      <summary>
+        Gets information about the web hosting environment.
+      </summary>
+    </member>
+    <member name="M:SocialCrunch.Startup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+      <summary>
+        This method gets called by the runtime. Use this method to add services to the container.
+      </summary>
+      <param name="services">Collection of service descriptors.</param>
+    </member>
+    <member name="M:SocialCrunch.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Mvc.ApiExplorer.IApiVersionDescriptionProvider)">
+      <summary>
+        Application configuration.
+      </summary>
+      <param name="app">The application builder.</param>
+      <param name="provider">The api version description provider.</param>
+    </member>
+    <member name="M:SocialCrunch.Startup.ConfigureApiDocumentation(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,System.String)">
+      <summary>
+        Add a Swagger document for each discovered API version.
+      </summary>
+      <param name="services">The specified service descriptor collection.</param>
+      <param name="title">The Swagger documentation title.</param>
+      <param name="path">Path of the xml project documentation.</param>
+    </member>
+  </members>
+</doc>

@@ -8,35 +8,35 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using SocialCrunch.Configuration;
 using SocialCrunch.Configuration.Extension;
 
 namespace SocialCrunch
 {
     public class Program
     {
-
-        private static string Environement =>
-            Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "development";
-
-        private static IConfiguration Configuration =>
-            new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: false)
-                .AddJsonFile($"appsettings.{Environement}.json", optional: true)
-                .AddEnvironmentVariables()
-                .Build();
-
         public static int Main(string[] args)
         {
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "development";
+
             try
             {
-                Log.Information("Starting web host for {environment}", Environement);
+                Log.Information("Starting web host for {environment}", environment);
+
+                var configuration = new ConfigurationBuilder()
+                    .SetBasePath(Directory.GetCurrentDirectory())
+                    .AddJsonFile("appsettings.json", optional: false)
+                    .AddJsonFile($"appsettings.{environment}.json", optional: true)
+                    .AddEnvironmentVariables()
+                    .Build();
+
+                Logging.InitializeLogging(configuration);
 
                 WebHost.CreateDefaultBuilder(args)
                     .UseKestrel()
                     //.UseLibuv()
                     .UseStartup<Startup>()
-                    .UseConfiguration(Configuration)
+                    .UseConfiguration(configuration)
                     .UseUrls("http://*:80")
                     .AddMetrics()
                     .AddLogging()

@@ -11,7 +11,7 @@ using Serilog.Sinks.Elasticsearch;
 
 namespace SocialCrunch.Configuration
 {
-    public class Logging
+    public static class Logging
     {
         public static void InitializeLogging(IConfiguration configuration)
         {
