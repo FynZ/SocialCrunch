@@ -22,7 +22,7 @@ using SocialCrunch.Configuration.Extension;
 
 namespace SocialCrunch
 {
-    public partial class Startup
+    public class Startup
     {
         public Startup(IConfiguration configuration)
         {
@@ -40,13 +40,13 @@ namespace SocialCrunch
             services.AddMvcCore().AddVersionedApiExplorer(o => o.GroupNameFormat = "'v'V");
 
             services.ConfigureApiDocumentation("SocialCrunch API",
-                Path.Combine(PlatformServices.Default.Application.ApplicationBasePath, "SocialCrunch.xml"));
+                Path.Combine(PlatformServices.Default.Application.ApplicationBasePath, "SocialCrunch.xml")); // ?
 
             // Mvc behavior
             services.AddMvc(options =>
                 {
                     // Filters
-                    options.Filters.Add(new ResponseCacheAttribute()
+                    options.Filters.Add(new ResponseCacheAttribute
                     {
                         Location = ResponseCacheLocation.None,
                         NoStore = true
@@ -72,7 +72,7 @@ namespace SocialCrunch
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApiVersionDescriptionProvider provider)
         {
-            var forwardedOptions = new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.All };
+            var forwardedOptions = new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.All }; // ?
             forwardedOptions.KnownNetworks.Clear();
             forwardedOptions.KnownProxies.Clear();
 

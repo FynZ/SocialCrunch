@@ -34,7 +34,7 @@ namespace SocialCrunch
 
                 WebHost.CreateDefaultBuilder(args)
                     .UseKestrel()
-                    //.UseLibuv()
+                    .UseLibuv() // ?
                     .UseStartup<Startup>()
                     .UseConfiguration(configuration)
                     .UseUrls("http://*:80")
