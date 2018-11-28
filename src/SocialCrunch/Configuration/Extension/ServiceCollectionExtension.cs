@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Swashbuckle.AspNetCore.Swagger;
 
-namespace SocialCrunch.Configuration
+namespace SocialCrunch.Configuration.Extension
 {
     public static class ServiceCollectionExtension
     {

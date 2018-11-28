@@ -18,7 +18,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.PlatformAbstractions;
 using Newtonsoft.Json.Converters;
-using SocialCrunch.Configuration;
+using SocialCrunch.Configuration.Extension;
 
 namespace SocialCrunch
 {

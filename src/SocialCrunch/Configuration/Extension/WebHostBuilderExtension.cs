@@ -10,7 +10,7 @@ using Serilog;
 using App.Metrics.AspNetCore;
 using App.Metrics.Formatters.Prometheus;
 
-namespace SocialCrunch.Configuration
+namespace SocialCrunch.Configuration.Extension
 {
     public static class WebHostBuilderExtension
     {

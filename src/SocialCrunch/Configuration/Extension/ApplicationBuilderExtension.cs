@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
 using SocialCrunch.Configuration.Middleware;
 
-namespace SocialCrunch.Configuration
+namespace SocialCrunch.Configuration.Extension
 {
     public static class ApplicationBuilderExtension
     {
