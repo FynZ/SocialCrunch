@@ -5,6 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Facebook" Version="7.0.6" />
+    <PackageReference Include="linqtotwitter" Version="5.0.0" />
+    <PackageReference Include="TweetinviAPI" Version="4.0.0" />
+    <PackageReference Include="TweetSharp" Version="2.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Data\Data.csproj" />
     <ProjectReference Include="..\Models\Models.csproj" />
   </ItemGroup>

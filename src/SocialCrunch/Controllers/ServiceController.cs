@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace SocialCrunch.Controllers
 {
     [ApiController]
-    [Route("api/v{version:apiVersion}")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("2")]
     public class ServiceController : Controller
     {

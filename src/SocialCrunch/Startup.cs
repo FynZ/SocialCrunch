@@ -18,6 +18,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.PlatformAbstractions;
 using Newtonsoft.Json.Converters;
 using SocialCrunch.Configuration;
+using SocialCrunch.Configuration.DependencyInjection;
 using SocialCrunch.Configuration.Extension;
 
 namespace SocialCrunch
@@ -67,6 +68,12 @@ namespace SocialCrunch
             // GZip compression
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Optimal);
             services.AddResponseCompression();
+
+            string connectionString = Configuration.GetConnectionString("Postgres");
+
+            services.InjectRepositories(connectionString);
+            services.InjectServices();
+            services.InjectUtils();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
