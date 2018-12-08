@@ -152,7 +152,7 @@ namespace Data
 
                 con.Open();
 
-                return (await con.ExecuteAsync(sql, new { Id = id })) != 0;
+                return await con.ExecuteAsync(sql, new { Id = id }) != 0;
             }
         }
     }

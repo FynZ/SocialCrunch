@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Models.Twitter;
 using Tweetinvi;
 using Tweetinvi.Models;
 using TweetSharp;
@@ -22,6 +23,11 @@ namespace Business
             _twitter = new TwitterService(token, tokenSecret);
 
             _user = User.GetAuthenticatedUser();
+        }
+
+        public void ChangeUser(string token, string tokenSecret)
+        {
+            Auth.SetUserCredentials(consumerKey, consumerSecret, token, tokenSecret);
         }
 
         public object GetAnalytics()
@@ -47,21 +53,27 @@ namespace Business
                 .Sum(x => x.TweetDTO.FavoriteCount.GetValueOrDefault());
         }
 
-        public object GetDailyAnalytics()
+        public TwitterDailyData GetDailyAnalytics()
         {
-            var timeline = Tweetinvi.Timeline.GetUserTimeline(_user.Id, 2000);
+            var timeline = Tweetinvi.Timeline.GetUserTimeline(_user.Id, 2000)
+                .Where(x => x.TweetDTO.CreatedAt > DateTime.Now.Date);
 
-            var likeCount = timeline.Where(x => x.TweetDTO.CreatedAt > DateTime.Now.Date)
-                .Sum(x => x.TweetDTO.FavoriteCount.GetValueOrDefault());
+            int likeCount = 0;
+            int retweetCount = 0;
+            int repliesCount = 0;
 
-            var retweetCount = timeline.Where(x => x.TweetDTO.CreatedAt > DateTime.Now.Date)
-                .Sum(x => x.TweetDTO.RetweetCount);
+            foreach (var tweet in timeline)
+            {
+                likeCount += tweet.TweetDTO.FavoriteCount.GetValueOrDefault();
+                retweetCount += tweet.TweetDTO.RetweetCount;
+                repliesCount += tweet.TweetDTO.ReplyCount.GetValueOrDefault();
+            }
 
             var followerCount = _user.FollowersCount;
 
             var popularTweets = timeline.Where(x => x.IsRetweet).OrderByDescending(x => x, new TwitterComparer()).ToList().GetRange(0, 3);
 
-            return new { likeCount, retweetCount, followerCount };
+            return new TwitterDailyData(likeCount, retweetCount, repliesCount);
         }
     }
 }
