@@ -9,20 +9,28 @@ using Npgsql;
 
 namespace Data
 {
-    public class TokenRepository : ITokenRepository
+    public class TokenRepository : BaseRepository, ITokenRepository
     {
-        private readonly string _connectionString;
-
-        public TokenRepository(string connectionString)
-        {
-            _connectionString = connectionString;
-        }
-
-        protected virtual IDbConnection Connection => new NpgsqlConnection(_connectionString);
+        public TokenRepository(string connectionString) : base(connectionString) { }
 
         public async Task<IEnumerable<Token>> GetTokens()
         {
-            throw new NotImplementedException();
+            using (var con = Connection)
+            {
+                const string sql =
+                    @"SELECT 
+                        user_id AS UserId,
+                        access_token AS AccessToken,
+                        token_secret AS TokenSecret 
+                    FROM 
+                        t_social_networks 
+                    WHERE 
+                        social_network_type = @type";
+
+                con.Open();
+
+                return await con.QueryAsync<Token>(sql);
+            }
         }
 
         public async Task<IEnumerable<Token>> GetTokens(SocialNetworkType type)
@@ -45,19 +53,68 @@ namespace Data
             }
         }
 
-        public async Task<object> GetTokensForUser(int userId)
+        public async Task<IEnumerable<Token>> GetTokensForUser(int userId)
         {
-            throw new NotImplementedException();
+            using (var con = Connection)
+            {
+                const string sql =
+                    @"SELECT 
+                        id AS Id
+                        user_id AS UserId,
+                        access_token AS AccessToken,
+                        token_secret AS TokenSecret 
+                    FROM 
+                        t_social_networks 
+                    WHERE 
+                        user_id = @userId";
+
+                con.Open();
+
+                return await con.QueryAsync<Token>(sql, new { UserId = userId });
+            }
         }
 
-        public async Task<Token> GetToken(int tokenId)
+        public async Task<Token> GetToken(int id)
         {
-            throw new NotImplementedException();
+            using (var con = Connection)
+            {
+                const string sql =
+                    @"SELECT 
+                        id AS Id
+                        user_id AS UserId,
+                        access_token AS AccessToken,
+                        token_secret AS TokenSecret 
+                    FROM 
+                        t_social_networks 
+                    WHERE 
+                        id = @id";
+
+                con.Open();
+
+                return await con.QueryFirstOrDefaultAsync<Token>(sql, new { Id = id });
+            }
         }
 
-        public async Task<Token> GetToken(SocialNetworkType type, int userId)
+        public async Task<Token> GetToken(SocialNetworkType type, int id)
         {
-            throw new NotImplementedException();
+            using (var con = Connection)
+            {
+                const string sql =
+                    @"SELECT 
+                        id AS Id
+                        user_id AS UserId,
+                        access_token AS AccessToken,
+                        token_secret AS TokenSecret 
+                    FROM 
+                        t_social_networks 
+                    WHERE 
+                        social_network_type = @type
+                        And id = @id";
+
+                con.Open();
+
+                return await con.QueryFirstOrDefaultAsync<Token>(sql, new { Type = (int)type, Id = id });
+            }
         }
 
         public async Task<Token> GetTokenForUser(SocialNetworkType type, int userId)
@@ -66,6 +123,7 @@ namespace Data
             {
                 const string sql =
                     @"SELECT 
+                        id AS Id
                         user_id AS UserId,
                         access_token AS AccessToken,
                         token_secret AS TokenSecret 
@@ -77,7 +135,24 @@ namespace Data
 
                 con.Open();
 
-                return await con.QueryFirstAsync<Token>(sql, new { Type = (int)type, UserId = userId });
+                return await con.QueryFirstOrDefaultAsync<Token>(sql, new { Type = (int)type, UserId = userId });
+            }
+        }
+
+        public async Task<bool> RevokeToken(int id)
+        {
+            using (var con = Connection)
+            {
+                const string sql =
+                    @"UPDATE 
+                        t_social_networks 
+                      SET is_revoked = true
+                    WHERE 
+                        id = @id";
+
+                con.Open();
+
+                return (await con.ExecuteAsync(sql, new { Id = id })) != 0;
             }
         }
     }

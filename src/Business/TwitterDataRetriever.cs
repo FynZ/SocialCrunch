@@ -46,5 +46,22 @@ namespace Business
             return timeline.Where(x => x.TweetDTO.CreatedAt > DateTime.Now.Date)
                 .Sum(x => x.TweetDTO.FavoriteCount.GetValueOrDefault());
         }
+
+        public object GetDailyAnalytics()
+        {
+            var timeline = Tweetinvi.Timeline.GetUserTimeline(_user.Id, 2000);
+
+            var likeCount = timeline.Where(x => x.TweetDTO.CreatedAt > DateTime.Now.Date)
+                .Sum(x => x.TweetDTO.FavoriteCount.GetValueOrDefault());
+
+            var retweetCount = timeline.Where(x => x.TweetDTO.CreatedAt > DateTime.Now.Date)
+                .Sum(x => x.TweetDTO.RetweetCount);
+
+            var followerCount = _user.FollowersCount;
+
+            var popularTweets = timeline.Where(x => x.IsRetweet).OrderByDescending(x => x, new TwitterComparer()).ToList().GetRange(0, 3);
+
+            return new { likeCount, retweetCount, followerCount };
+        }
     }
 }

@@ -6,8 +6,15 @@ using Npgsql;
 
 namespace Data
 {
-    internal abstract class BaseRepository
+    public abstract class BaseRepository
     {
-        protected virtual IDbConnection Connection => new NpgsqlConnection("_connectionString");
+        protected readonly string _connectionString;
+
+        protected BaseRepository(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
+
+        protected virtual IDbConnection Connection => new NpgsqlConnection(_connectionString);
     }
 }

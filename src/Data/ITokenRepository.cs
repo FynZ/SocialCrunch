@@ -12,8 +12,11 @@ namespace Data
         Task<IEnumerable<Token>> GetTokens();
         Task<IEnumerable<Token>> GetTokens(SocialNetworkType type);
 
-        Task<object> GetTokensForUser(int userId);
+        Task<IEnumerable<Token>> GetTokensForUser(int userId);
         Task<Token> GetToken(int tokenId);
         Task<Token> GetToken(SocialNetworkType type, int userId);
+        Task<Token> GetTokenForUser(SocialNetworkType type, int userId);
+
+        Task<bool> RevokeToken(int id);
     }
 }
