@@ -8,11 +8,18 @@ namespace Business
 {
     public class FacebookDataRetriever
     {
-        private readonly FacebookClient _facebook;
+        private FacebookClient _facebook;
 
-        public FacebookDataRetriever(String token)
+        public FacebookDataRetriever()
+        {
+
+        }
+
+        public FacebookDataRetriever ChangeUser(string token)
         {
             _facebook = new FacebookClient(token);
+
+            return this;
         }
 
         public FacebookUser GetProfile()

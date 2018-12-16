@@ -14,20 +14,30 @@ namespace Business
         private const string consumerKey = "MyKfxtg9Qi5XkvHlvKq1phf5m";
         private const string consumerSecret = "aM4hsNAWLgn7jAMDKwYMJY2oCfKNVpXnkTYia1bel87bV34Jbp";
 
-        private readonly TwitterService _twitter;
-        private readonly IAuthenticatedUser _user;
+        private TwitterService _twitter;
+        private IAuthenticatedUser _user;
 
-        public TwitterDataRetriever(string token, string tokenSecret)
+        public TwitterDataRetriever()
         {
-            Auth.SetUserCredentials(consumerKey, consumerSecret, token, tokenSecret);
-            _twitter = new TwitterService(token, tokenSecret);
 
-            _user = User.GetAuthenticatedUser();
         }
 
-        public void ChangeUser(string token, string tokenSecret)
+        //public TwitterDataRetriever(string token, string tokenSecret)
+        //{
+        //    Auth.SetUserCredentials(consumerKey, consumerSecret, token, tokenSecret);
+
+        //    _twitter = new TwitterService(token, tokenSecret);
+        //    _user = User.GetAuthenticatedUser();
+        //}
+
+        public TwitterDataRetriever ChangeUser(string token, string tokenSecret)
         {
             Auth.SetUserCredentials(consumerKey, consumerSecret, token, tokenSecret);
+
+            _twitter = new TwitterService(token, tokenSecret);
+            _user = User.GetAuthenticatedUser();
+
+            return this;
         }
 
         public object GetAnalytics()
@@ -74,6 +84,19 @@ namespace Business
             var popularTweets = timeline.Where(x => x.IsRetweet).OrderByDescending(x => x, new TwitterComparer()).ToList().GetRange(0, 3);
 
             return new TwitterDailyData(likeCount, retweetCount, repliesCount);
+        }
+
+        public TwitterDailySummary GetDailySummary()
+        {
+            var user = Tweetinvi.User.GetAuthenticatedUser();
+
+            var followers = user.FollowersCount;
+            var friends = user.FriendsCount;
+            var followings = user.FriendsCount;
+            var tweets = user.StatusesCount;
+            var likes = user.FavouritesCount;
+
+            return new TwitterDailySummary(followers, friends, followings, tweets, likes);
         }
     }
 }

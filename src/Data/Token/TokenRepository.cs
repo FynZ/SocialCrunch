@@ -7,13 +7,13 @@ using Models;
 using Models.Enums;
 using Npgsql;
 
-namespace Data
+namespace Data.Token
 {
     public class TokenRepository : BaseRepository, ITokenRepository
     {
         public TokenRepository(string connectionString) : base(connectionString) { }
 
-        public async Task<IEnumerable<Token>> GetTokens()
+        public async Task<IEnumerable<SocialToken>> GetTokens()
         {
             using (var con = Connection)
             {
@@ -29,11 +29,11 @@ namespace Data
 
                 con.Open();
 
-                return await con.QueryAsync<Token>(sql);
+                return await con.QueryAsync<SocialToken>(sql);
             }
         }
 
-        public async Task<IEnumerable<Token>> GetTokens(SocialNetworkType type)
+        public async Task<IEnumerable<SocialToken>> GetTokens(SocialNetworkType type)
         {
             using (var con = Connection)
             {
@@ -49,11 +49,11 @@ namespace Data
 
                 con.Open();
 
-                return await con.QueryAsync<Token>(sql, new {Type = (int)type});
+                return await con.QueryAsync<SocialToken>(sql, new {Type = (int)type});
             }
         }
 
-        public async Task<IEnumerable<Token>> GetTokensForUser(int userId)
+        public async Task<IEnumerable<SocialToken>> GetTokensForUser(int userId)
         {
             using (var con = Connection)
             {
@@ -70,11 +70,11 @@ namespace Data
 
                 con.Open();
 
-                return await con.QueryAsync<Token>(sql, new { UserId = userId });
+                return await con.QueryAsync<SocialToken>(sql, new { UserId = userId });
             }
         }
 
-        public async Task<Token> GetToken(int id)
+        public async Task<SocialToken> GetToken(int id)
         {
             using (var con = Connection)
             {
@@ -91,11 +91,11 @@ namespace Data
 
                 con.Open();
 
-                return await con.QueryFirstOrDefaultAsync<Token>(sql, new { Id = id });
+                return await con.QueryFirstOrDefaultAsync<SocialToken>(sql, new { Id = id });
             }
         }
 
-        public async Task<Token> GetToken(SocialNetworkType type, int id)
+        public async Task<SocialToken> GetToken(SocialNetworkType type, int id)
         {
             using (var con = Connection)
             {
@@ -113,11 +113,11 @@ namespace Data
 
                 con.Open();
 
-                return await con.QueryFirstOrDefaultAsync<Token>(sql, new { Type = (int)type, Id = id });
+                return await con.QueryFirstOrDefaultAsync<SocialToken>(sql, new { Type = (int)type, Id = id });
             }
         }
 
-        public async Task<Token> GetTokenForUser(SocialNetworkType type, int userId)
+        public async Task<SocialToken> GetTokenForUser(SocialNetworkType type, int userId)
         {
             using (var con = Connection)
             {
@@ -135,7 +135,7 @@ namespace Data
 
                 con.Open();
 
-                return await con.QueryFirstOrDefaultAsync<Token>(sql, new { Type = (int)type, UserId = userId });
+                return await con.QueryFirstOrDefaultAsync<SocialToken>(sql, new { Type = (int)type, UserId = userId });
             }
         }
 

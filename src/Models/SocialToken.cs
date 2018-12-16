@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Models
 {
-    public class Token
+    public class SocialToken
     {
         public int Id { get; set; }
         public int UserId { get; set; }

@@ -13,6 +13,7 @@ namespace Models.Enums
         GooglePlus = 4,
         Linkedin = 5,
         MySpace = 6,
-        Github = 7
+        Github = 7,
+        Youtube = 8
     }
 }

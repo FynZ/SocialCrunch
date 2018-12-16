@@ -24,7 +24,7 @@ namespace SocialCrunch.Controllers
         [HttpGet("tweets")]
         public IActionResult Index()
         {
-            var retriever = new TwitterDataRetriever(_token, _tokenSecret);
+            var retriever = new TwitterDataRetriever().ChangeUser(_token, _tokenSecret);
 
             var a = retriever.GetAnalytics();
 
@@ -34,7 +34,7 @@ namespace SocialCrunch.Controllers
         [HttpGet("like-count")]
         public IActionResult LikeCount()
         {
-            var retriever = new TwitterDataRetriever(_token, _tokenSecret);
+            var retriever = new TwitterDataRetriever().ChangeUser(_token, _tokenSecret);
 
             var a = retriever.GetLikeCount();
 

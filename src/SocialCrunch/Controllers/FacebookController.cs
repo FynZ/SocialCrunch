@@ -4,10 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Business;
 using Data;
+using Data.Token;
 using Microsoft.AspNetCore.Mvc;
 using Models.Enums;
-
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace SocialCrunch.Controllers
 {
@@ -34,7 +33,7 @@ namespace SocialCrunch.Controllers
         {
             var tokens = await _tokenRepository.GetTokens(SocialNetworkType.Facebook);
 
-            var retriever = new FacebookDataRetriever(_token);
+            var retriever = new FacebookDataRetriever().ChangeUser(_token);
             var user = retriever.GetProfile();
 
             return Json(user);
@@ -45,7 +44,7 @@ namespace SocialCrunch.Controllers
         {
             var tokens = await _tokenRepository.GetTokens(SocialNetworkType.Facebook);
 
-            var retriever = new FacebookDataRetriever(_token);
+            var retriever = new FacebookDataRetriever().ChangeUser(_token);
 
             var postDetails = new List<object>();
 
@@ -55,7 +54,7 @@ namespace SocialCrunch.Controllers
         [HttpGet("comments")]
         public async Task<IActionResult> Comments()
         {
-            var retriever = new FacebookDataRetriever(_token);
+            var retriever = new FacebookDataRetriever().ChangeUser(_token);
 
             var comments = retriever.GetUserComments();
 
