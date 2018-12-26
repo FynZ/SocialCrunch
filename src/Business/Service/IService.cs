@@ -9,7 +9,9 @@ namespace Business.Service
     {
         SocialNetworkType Type { get; }
         bool Running { get; }
+
         void Start();
         void Stop();
+        void ForceStop();
     }
 }

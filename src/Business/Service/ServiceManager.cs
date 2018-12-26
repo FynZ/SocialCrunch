@@ -10,7 +10,7 @@ using Models.Enums;
 
 namespace Business.Service
 {
-    public class ServiceManager
+    public class ServiceManager : IServiceManager
     {
         #region SingletonImplementation
         //private static volatile Service INSTANCE;
@@ -41,21 +41,87 @@ namespace Business.Service
         //}
         #endregion SingletonImplementation
 
-        private readonly TimeSpan _workingDelay;
         private readonly Dictionary<SocialNetworkType, IService> _services;
-
-        public bool TwitterRunning { get; set; }
 
         public ServiceManager(TwitterService twitterService, FacebookService facebookService)
         {
-            _services.Add(SocialNetworkType.Twitter, twitterService);
-            _services.Add(SocialNetworkType.Facebook, facebookService);
-            _services.Add(SocialNetworkType.Instagram, null);
-            _services.Add(SocialNetworkType.GooglePlus, null);
-            _services.Add(SocialNetworkType.Linkedin, null);
-            _services.Add(SocialNetworkType.MySpace, null);
-            _services.Add(SocialNetworkType.Github, null);
-            _services.Add(SocialNetworkType.MySpace, null);
+            _services = new Dictionary<SocialNetworkType, IService>
+            {
+                {SocialNetworkType.Twitter, twitterService},
+                {SocialNetworkType.Facebook, facebookService},
+                {SocialNetworkType.Instagram, null},
+                {SocialNetworkType.GooglePlus, null},
+                {SocialNetworkType.Linkedin, null},
+                {SocialNetworkType.MySpace, null},
+                {SocialNetworkType.Github, null},
+                {SocialNetworkType.Youtube, null}
+            };
+        }
+
+        public void StartServices()
+        {
+            foreach (var service in _services.Values)
+            {
+                if (!service.Running)
+                {
+                    service?.Start();
+                }
+            }
+        }
+
+        public void StopServices()
+        {
+            foreach (var service in _services.Values)
+            {
+                if (service.Running)
+                {
+                    service.Stop();
+                }
+            }
+        }
+
+
+        public bool StartService(SocialNetworkType target)
+        {
+            if (_services.TryGetValue(target, out IService service))
+            {
+                if (!service.Running)
+                {
+                    service.Start();
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool StopService(SocialNetworkType target)
+        {
+            if (_services.TryGetValue(target, out IService service))
+            {
+                if (service.Running)
+                {
+                    service.Stop();
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool IsServiceRunning(SocialNetworkType target)
+        {
+            if (_services.TryGetValue(target, out IService service))
+            {
+                if (service.Running)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

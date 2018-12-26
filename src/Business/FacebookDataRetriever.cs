@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Facebook;
 using Models.Facebook;
 
@@ -8,18 +9,18 @@ namespace Business
 {
     public class FacebookDataRetriever
     {
-        private FacebookClient _facebook;
+        private readonly FacebookClient _facebook;
+        private readonly string _token;
 
-        public FacebookDataRetriever()
+        public FacebookDataRetriever(string token)
         {
-
+            _token = token;
+            _facebook = new FacebookClient(token);
         }
 
-        public FacebookDataRetriever ChangeUser(string token)
+        public bool IsSameUser(string token)
         {
-            _facebook = new FacebookClient(token);
-
-            return this;
+            return String.CompareOrdinal(token, _token) == 0;
         }
 
         public FacebookUser GetProfile()
@@ -37,9 +38,9 @@ namespace Business
             return _facebook.Get($"{postId}?fields=shares,likes.summary(true),comments.summary(true)");
         }
 
-        public object GetUserComments()
+        public async Task<object> GetUserComments()
         {
-            return _facebook.Get($"me/comments?fields=id,created_time,from,like_count");
+            return await _facebook.GetTaskAsync($"me/comments?fields=id,created_time,from,like_count");
         }
     }
 }

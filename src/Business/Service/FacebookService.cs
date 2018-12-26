@@ -19,5 +19,10 @@ namespace Business.Service
         {
             throw new NotImplementedException();
         }
+
+        public void ForceStop()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
