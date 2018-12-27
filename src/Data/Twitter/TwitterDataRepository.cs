@@ -43,7 +43,13 @@ namespace Data.Twitter
             }
         }
 
-        public async Task<bool> InsertDailyData(TwitterDailyData data, int userId)
+        /// <summary>
+        /// Insert the daily Data for the given user
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="data">The data to insert</param>
+        /// <returns>True on success, otherwise false</returns>
+        public async Task<bool> InsertDailyData(int userId, TwitterDailyData data)
         {
             using (var con = Connection)
             {
@@ -110,7 +116,7 @@ namespace Data.Twitter
             }
         }
 
-        public async Task<bool> InsertDailySummary(TwitterDailySummary data, int userId)
+        public async Task<bool> InsertDailySummary(int userId, TwitterDailySummary data)
         {
             using (var con = Connection)
             {
@@ -181,7 +187,7 @@ namespace Data.Twitter
             }
         }
 
-        public async Task<bool> InsertBestDailyTweets(IEnumerable<Tweet> tweets, int userId)
+        public async Task<bool> InsertBestDailyTweets(int userId, IEnumerable<Tweet> tweets)
         {
             using (var con = Connection)
             {
@@ -262,7 +268,7 @@ namespace Data.Twitter
             }
         }
 
-        public Task<bool> InsertBestTweets(IEnumerable<Tweet> tweets, int userId)
+        public Task<bool> InsertBestTweets(int userId, IEnumerable<Tweet> tweets)
         {
             throw new NotImplementedException();
         }

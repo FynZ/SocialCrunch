@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Tweetinvi.Models;
 
-namespace Business
+namespace Business.Twitter
 {
     class TwitterComparer : IComparer<ITweet>
     {

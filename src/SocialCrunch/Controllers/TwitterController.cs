@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Business;
 using Microsoft.AspNetCore.Mvc;
+using Business;
+using Business.Twitter;
 
 namespace SocialCrunch.Controllers
 {
@@ -12,31 +13,33 @@ namespace SocialCrunch.Controllers
     [ApiVersion("1")]
     public class TwitterController : Controller
     {
-        private readonly string _token;
-        private readonly string _tokenSecret;
+        // to remove after
+        private readonly string _token = "3405556169-aLsMP8geNwVP80gK3CmF4wsWjTMAiPE0LEnfkfK";
+        private readonly string _tokenSecret = "dXULm8t2XpHa0t9rHeZFVx58m1ZQT721z84N7O1vvypKx";
 
-        public TwitterController()
+        private readonly IDataRetrieverFactory _dataRetrieverFactory;
+
+        public TwitterController(IDataRetrieverFactory dataRetrieverFactory)
         {
-            _token = "3405556169-aLsMP8geNwVP80gK3CmF4wsWjTMAiPE0LEnfkfK";
-            _tokenSecret = "dXULm8t2XpHa0t9rHeZFVx58m1ZQT721z84N7O1vvypKx";
+            _dataRetrieverFactory = dataRetrieverFactory;
         }
 
-        [HttpGet("tweets")]
-        public IActionResult Index()
+        [HttpGet("daily-analytics")]
+        public IActionResult GetDailyAnalytics()
         {
-            var retriever = new TwitterDataRetriever().ChangeUser(_token, _tokenSecret);
+            var retriever = _dataRetrieverFactory.GetTwitterDataRetriever(_token, _tokenSecret);
 
-            var a = retriever.GetAnalytics();
+            var a = retriever.GetDailyAnalytics();
 
             return Json(a);
         }
 
-        [HttpGet("like-count")]
-        public IActionResult LikeCount()
+        [HttpGet("daily-summary")]
+        public IActionResult GetDailySummary()
         {
-            var retriever = new TwitterDataRetriever().ChangeUser(_token, _tokenSecret);
+            var retriever = _dataRetrieverFactory.GetTwitterDataRetriever(_token, _tokenSecret);
 
-            var a = retriever.GetLikeCount();
+            var a = retriever.GetDailySummary();
 
             return Json(a);
         }

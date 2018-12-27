@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Business.Facebook;
+using Business.Twitter;
 using Microsoft.Extensions.Configuration;
 
 namespace Business

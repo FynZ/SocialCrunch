@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
+using Business.Twitter;
 using Data.Token;
 using Data.Twitter;
 using Models;
@@ -120,7 +121,7 @@ namespace Business.Service
                 _twitterDataRetriever = _factory.GetTwitterDataRetriever(token.AccessToken, token.TokenSecret);
 
                 var dailyData = _twitterDataRetriever.GetDailyAnalytics();
-                await _twitterDataRepository.InsertDailyData(dailyData, token.UserId);
+                await _twitterDataRepository.InsertDailyData(token.UserId, dailyData);
 
                 var previousRun = await _twitterDataRepository.GetDailyData(token.UserId, DateTime.Now.AddDays(-1));
 
@@ -132,9 +133,9 @@ namespace Business.Service
                 Log.Information($"Daily data inserted for user {token.UserId}");
 
                 var dailySummary = _twitterDataRetriever.GetDailySummary();
-                await _twitterDataRepository.InsertDailySummary(dailySummary, token.UserId);
+                await _twitterDataRepository.InsertDailySummary(token.UserId, dailySummary);
 
-                Log.Information($"Daily data inserted for user {token.UserId}");
+                Log.Information($"Daily summary inserted for user {token.UserId}");
             }
             catch (Exception e)
             {

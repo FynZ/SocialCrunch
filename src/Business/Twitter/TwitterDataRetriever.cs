@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Models.Twitter;
 using Tweetinvi;
 using Tweetinvi.Logic;
 using Tweetinvi.Models;
-using TweetSharp;
 
-namespace Business
+namespace Business.Twitter
 {
     /// <summary>
     /// Class Used to access the Twitter API through Tweetinvi
@@ -40,10 +40,17 @@ namespace Business
                    String.CompareOrdinal(_tokenSecret, tokenSecret) == 0;
         }
 
-        public void CollectData()
+        public TwitterCompleteData CollectData()
         {
-            var timeline = Timeline.GetUserTimeline(User.Id, 2000);
-            // to do
+            var timeline = GetTimeLine();
+
+            var holder = new TwitterCompleteData();
+            holder.TwitterDailySummary = GetDailySummary();
+            holder.TwitterDailyData = GetDailyAnalyticsImpl(timeline);
+            holder.BestDailyTweets = GetBestTweets(TimeLineToDailyTimeLine(timeline));
+            holder.BestAllTimeTweets = GetBestTweets(timeline);
+
+            return holder;
         }
 
         public TwitterDailyData GetDailyAnalytics()
@@ -80,10 +87,18 @@ namespace Business
             return new TwitterDailySummary(followers, friends, followings, tweets, likes);
         }
 
-        public IEnumerable<Models.Twitter.Tweet> GetBestTweets(IEnumerable<ITweet> timeline = null, int count = 3)
+        public async Task<IEnumerable<Models.Twitter.Tweet>> GetBestDailyTweets(int count = 3)
         {
-            if (timeline == null) timeline = GetDailyTimeLine();
+            return GetBestTweets(await GetDailyTimeLine(), count);
+        }
 
+        public async Task<IEnumerable<Models.Twitter.Tweet>> GetAllTimeBestTweets(int count = 3)
+        {
+            return GetBestTweets(await GetTimeLine(), count);
+        }
+
+        private IEnumerable<Models.Twitter.Tweet> GetBestTweets(IEnumerable<ITweet> timeline, int count = 3)
+        {
             return timeline
                 .Where(x => x.IsRetweet)
                 .OrderByDescending(x => x, new TwitterComparer())
@@ -103,8 +118,10 @@ namespace Business
                 });
         }
 
-        private IEnumerable<ITweet> GetTimeLine(int count = 2000) => Timeline.GetUserTimeline(User.Id, count);
+        private async Task<IEnumerable<ITweet>> GetTimeLine(int count = 2000) => await TimelineAsync.GetUserTimeline(User.Id, count);
 
-        private IEnumerable<ITweet> GetDailyTimeLine() => Timeline.GetUserTimeline(User.Id, 2000).Where(x => x.TweetDTO.CreatedAt > DateTime.Now.Date);
+        private async Task<IEnumerable<ITweet>> GetDailyTimeLine() => TimeLineToDailyTimeLine(await GetTimeLine());
+
+        private IEnumerable<ITweet> TimeLineToDailyTimeLine(IEnumerable<ITweet> timeline) => timeline.Where(x => x.TweetDTO.CreatedAt > DateTime.Now.Date);
     }
 }

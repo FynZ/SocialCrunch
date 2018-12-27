@@ -1,4 +1,7 @@
-﻿namespace Business
+﻿using Business.Facebook;
+using Business.Twitter;
+
+namespace Business
 {
     public interface IDataRetrieverFactory
     {

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Facebook;
 using Models.Facebook;
 
-namespace Business
+namespace Business.Facebook
 {
     public class FacebookDataRetriever
     {
