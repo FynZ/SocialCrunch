@@ -12,10 +12,6 @@ namespace Business.Twitter
 {
     /// <summary>
     /// Class Used to access the Twitter API through Tweetinvi
-    /// <para>
-    ///     /!\ THIS CLASS IS PROBABLY NOT THREAD SAFE LOOKING AT HOW THE AUTHENTICATION WORKS /!\
-    ///     I know, fuck the developer who made this Api..
-    /// </para>
     /// </summary>
     public class TwitterDataRetriever
     {
@@ -40,27 +36,29 @@ namespace Business.Twitter
                    String.CompareOrdinal(_tokenSecret, tokenSecret) == 0;
         }
 
-        public TwitterCompleteData CollectData()
+        public async Task<TwitterCompleteData> CollectData()
         {
-            var timeline = GetTimeLine();
+            var timeline = await GetTimeLine();
 
-            var holder = new TwitterCompleteData();
-            holder.TwitterDailySummary = GetDailySummary();
-            holder.TwitterDailyData = GetDailyAnalyticsImpl(timeline);
-            holder.BestDailyTweets = GetBestTweets(TimeLineToDailyTimeLine(timeline));
-            holder.BestAllTimeTweets = GetBestTweets(timeline);
+            var holder = new TwitterCompleteData
+            {
+                TwitterDailySummary = GetDailySummary(),
+                TwitterDailyData = await GetDailyAnalyticsImpl(timeline),
+                BestDailyTweets = GetBestTweets(TimeLineToDailyTimeLine(timeline)),
+                BestAllTimeTweets = GetBestTweets(timeline),
+            };
 
             return holder;
         }
 
-        public TwitterDailyData GetDailyAnalytics()
+        public async Task<TwitterDailyData> GetDailyAnalytics()
         {
-            return GetDailyAnalyticsImpl();
+            return await GetDailyAnalyticsImpl();
         }
 
-        private TwitterDailyData GetDailyAnalyticsImpl(IEnumerable<ITweet> timeline = null)
+        private async Task<TwitterDailyData> GetDailyAnalyticsImpl(IEnumerable<ITweet> timeline = null)
         {
-            if (timeline == null) timeline = GetDailyTimeLine();
+            if (timeline == null) timeline = await GetDailyTimeLine();
 
             int likeCount = 0;
             int retweetCount = 0;
@@ -80,7 +78,7 @@ namespace Business.Twitter
         {
             var followers = User.FollowersCount;
             var friends = User.FriendsCount;
-            var followings = User.FriendsCount;
+            var followings = 0;
             var tweets = User.StatusesCount;
             var likes = User.FavouritesCount;
 

@@ -120,15 +120,16 @@ namespace Business.Service
             {
                 _twitterDataRetriever = _factory.GetTwitterDataRetriever(token.AccessToken, token.TokenSecret);
 
-                var dailyData = _twitterDataRetriever.GetDailyAnalytics();
-                await _twitterDataRepository.InsertDailyData(token.UserId, dailyData);
-
+                var dailyData = await _twitterDataRetriever.GetDailyAnalytics();
                 var previousRun = await _twitterDataRepository.GetDailyData(token.UserId, DateTime.Now.AddDays(-1));
 
                 // if we have data from the previous day, we get the difference, else it's the value of today
                 dailyData.Followers = previousRun != null
                     ? _twitterDataRetriever.User.FollowersCount - previousRun.Followers
                     : _twitterDataRetriever.User.FollowersCount;
+
+                await _twitterDataRepository.InsertDailyData(token.UserId, dailyData);
+
 
                 Log.Information($"Daily data inserted for user {token.UserId}");
 
