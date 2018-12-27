@@ -13,7 +13,7 @@ namespace Data.Twitter
 
         public async Task<TwitterDailyData> GetDailyData(int userId, DateTime? day = null)
         {
-            if (day == null) day = DateTime.Now;
+            var date = day?.Date ?? DateTime.Today;
 
             using (var con = Connection)
             {
@@ -38,7 +38,7 @@ namespace Data.Twitter
                 return await con.QueryFirstOrDefaultAsync<TwitterDailyData>(sql, new
                 {
                     UserId = userId,
-                    Date = day.GetValueOrDefault().Date
+                    Date = date
                 });
             }
         }
@@ -59,7 +59,7 @@ namespace Data.Twitter
                             WHERE
                                 user_id = @userId
                             AND
-                                date > now()::date
+                                date = @date;
                         )
                         THEN
                             UPDATE 
@@ -72,7 +72,7 @@ namespace Data.Twitter
                             WHERE 
                                 user_id = user_id;
                             AND 
-                                date > now()::date;
+                                date = @date;
                         ELSE
                             INSERT INTO public.t_twitter_data
                             (
@@ -86,7 +86,7 @@ namespace Data.Twitter
                             VALUES
                             (
                                 @userId, 
-                                CURRENT_TIMESTAMP, 
+                                @date,
                                 @followers, 
                                 @likes, 
                                 @retweets, 
@@ -101,7 +101,8 @@ namespace Data.Twitter
                 return await con.ExecuteAsync(sql, new
                 {
                     UserId = userId,
-                    Followers = 2, // change this asap
+                    Date = DateTime.Today,
+                    Followers = data.Followers,
                     Likes = data.Likes,
                     Retweets = data.Retweets,
                     Replies = data.Replies
@@ -125,7 +126,7 @@ namespace Data.Twitter
                             WHERE
                                 user_id = @userId
                             AND
-                                date > now()::date
+                                date = @date;
                         )
                         THEN
                             UPDATE 
@@ -139,7 +140,7 @@ namespace Data.Twitter
                             WHERE
                                 user_id = user_id;
                             AND
-                                date > now()::date;
+                                date = @date;
                         ELSE
                             INSERT INTO public.t_twitter_data
                             (
@@ -154,7 +155,7 @@ namespace Data.Twitter
                             VALUES
                             (
                                 @userId,
-                                CURRENT_TIMESTAMP,
+                                @date,
                                 @followers,
                                 @followings,
                                 @friends,
@@ -170,11 +171,12 @@ namespace Data.Twitter
                 return await con.ExecuteAsync(sql, new
                 {
                     UserId = userId,
+                    Date = DateTime.Today,
                     Followers = data.Followers,
                     Followings = data.Followings,
                     Friends = data.Friends,
                     Tweets = data.Tweets,
-                    Likes = data.Likes,
+                    Likes = data.Likes
                 }) != 0;
             }
         }
@@ -195,7 +197,7 @@ namespace Data.Twitter
                             WHERE
                                 user_id = @userId
                             AND
-                                date > now()::date
+                                date = @date
                         )
                         THEN
                             DELETE
@@ -204,32 +206,34 @@ namespace Data.Twitter
                             WHERE
                                 user_id = @userId
                             AND
-                                date > now()::date
+                                date = @date
                         END IF;
 
                         INSERT INTO public.t_best_daily_tweets
                         (
-                            tweet_id
+                            user_id
+                            date,
+                            tweet_id,
                             tweet_user_id, 
                             creation_date,
                             content, 
                             reply_count, 
                             quote_count, 
                             retweet_count, 
-                            like_count,
-                            user_id
+                            like_count
                         )
                         VALUES
                         (
-                            @id
-                            @twitterUserId, 
+                            @userId
+                            @date,
+                            @tweetId,
+                            @tweetUserId, 
                             @creationDate, 
                             @content, 
                             @replyCount, 
                             @quoteCount,
                             @retweetCount, 
-                            @likeCount,
-                            @userId
+                            @likeCount
                         );
                     END
                     $$;";
@@ -240,15 +244,17 @@ namespace Data.Twitter
                 {
                     await con.ExecuteAsync(sql, new
                     {
-                        Id = tweet.Id,
-                        TweeterUserId = tweet.UserId,
+                        UserId = userId,
+                        Date = DateTime.Today,
+                        TweetId = tweet.Id,
+                        TweetUserId = tweet.UserId,
                         CreationDate = tweet.CreationDate,
                         Content = tweet.Content,
                         ReplyCount = tweet.ReplyCount,
                         QuoteCount = tweet.QuoteCount,
                         RetweetCount = tweet.RetweetCount,
                         LikeCount = tweet.LikeCount,
-                        UserId = userId
+
                     });
                 }
 

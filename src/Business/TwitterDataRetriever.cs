@@ -19,11 +19,10 @@ namespace Business
     /// </summary>
     public class TwitterDataRetriever
     {
-        private readonly TwitterService _twitter;
-        private readonly IAuthenticatedUser _user;
-
         private readonly string _token;
         private readonly string _tokenSecret;
+
+        public IAuthenticatedUser User { get; }
 
         public TwitterDataRetriever(string consumerKey, string consumerSecret, string token, string tokenSecret)
         {
@@ -32,8 +31,7 @@ namespace Business
 
             Auth.SetUserCredentials(consumerKey, consumerSecret, _token, _tokenSecret);
 
-            _twitter = new TwitterService(token, tokenSecret);
-            _user = Tweetinvi.User.GetAuthenticatedUser();
+            User = Tweetinvi.User.GetAuthenticatedUser();
         }
 
         public bool IsSameUser(string token, string tokenSecret)
@@ -44,7 +42,8 @@ namespace Business
 
         public void CollectData()
         {
-            var timeline = Timeline.GetUserTimeline(_user.Id, 2000);
+            var timeline = Timeline.GetUserTimeline(User.Id, 2000);
+            // to do
         }
 
         public TwitterDailyData GetDailyAnalytics()
@@ -72,11 +71,11 @@ namespace Business
 
         public TwitterDailySummary GetDailySummary()
         {
-            var followers = _user.FollowersCount;
-            var friends = _user.FriendsCount;
-            var followings = _user.FriendsCount;
-            var tweets = _user.StatusesCount;
-            var likes = _user.FavouritesCount;
+            var followers = User.FollowersCount;
+            var friends = User.FriendsCount;
+            var followings = User.FriendsCount;
+            var tweets = User.StatusesCount;
+            var likes = User.FavouritesCount;
 
             return new TwitterDailySummary(followers, friends, followings, tweets, likes);
         }
@@ -104,8 +103,8 @@ namespace Business
                 });
         }
 
-        private IEnumerable<ITweet> GetTimeLine(int count = 2000) => Timeline.GetUserTimeline(_user.Id, count);
+        private IEnumerable<ITweet> GetTimeLine(int count = 2000) => Timeline.GetUserTimeline(User.Id, count);
 
-        private IEnumerable<ITweet> GetDailyTimeLine() => Timeline.GetUserTimeline(_user.Id, 2000).Where(x => x.TweetDTO.CreatedAt > DateTime.Now.Date);
+        private IEnumerable<ITweet> GetDailyTimeLine() => Timeline.GetUserTimeline(User.Id, 2000).Where(x => x.TweetDTO.CreatedAt > DateTime.Now.Date);
     }
 }

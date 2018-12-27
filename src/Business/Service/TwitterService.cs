@@ -109,7 +109,7 @@ namespace Business.Service
             }
             catch (Exception e)
             {
-                Log.Fatal($"Unhandled error in loop for service {Type} with exception {e}");
+                Log.Fatal($"Unhandled error in loop for service {Type} with exception {e.Message}", e);
             }
         }
 
@@ -122,6 +122,13 @@ namespace Business.Service
                 var dailyData = _twitterDataRetriever.GetDailyAnalytics();
                 await _twitterDataRepository.InsertDailyData(dailyData, token.UserId);
 
+                var previousRun = await _twitterDataRepository.GetDailyData(token.UserId, DateTime.Now.AddDays(-1));
+
+                // if we have data from the previous day, we get the difference, else it's the value of today
+                dailyData.Followers = previousRun != null
+                    ? _twitterDataRetriever.User.FollowersCount - previousRun.Followers
+                    : _twitterDataRetriever.User.FollowersCount;
+
                 Log.Information($"Daily data inserted for user {token.UserId}");
 
                 var dailySummary = _twitterDataRetriever.GetDailySummary();
@@ -131,7 +138,7 @@ namespace Business.Service
             }
             catch (Exception e)
             {
-                Log.Error($"An error occured when gathering data for user {token.UserId} with exception {e}");
+                Log.Error($"An error occured when gathering data for user {token.UserId} with exception {e.Message}", e);
             }
         }
     }
