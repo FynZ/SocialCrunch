@@ -17,6 +17,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.PlatformAbstractions;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using SocialCrunch.Configuration;
 using SocialCrunch.Configuration.DependencyInjection;
 using SocialCrunch.Configuration.Extension;
@@ -38,7 +39,8 @@ namespace SocialCrunch
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddApiVersioning(options => options.ReportApiVersions = true);
-            services.AddMvcCore().AddVersionedApiExplorer(o => o.GroupNameFormat = "'v'V");
+            services.AddVersionedApiExplorer(o => o.GroupNameFormat = "'v'V");
+            services.AddMvcCore();
 
             services.ConfigureApiDocumentation("SocialCrunch API",
                 Path.Combine(PlatformServices.Default.Application.ApplicationBasePath, "SocialCrunch.xml")); // ?
@@ -55,7 +57,7 @@ namespace SocialCrunch
                     options.Filters.Add(new ProducesAttribute("application/json"));
                 })
                 .AddJsonOptions(options =>
-                    options.SerializerSettings.Converters.Add(new StringEnumConverter(camelCaseText: true)))
+                    options.SerializerSettings.Converters.Add(new StringEnumConverter(new CamelCaseNamingStrategy(), true)))
                 .AddMvcOptions(o => o.ModelMetadataDetailsProviders.Add(new DataAnnotationsMetadataProvider()));
 
             // Api behavior
