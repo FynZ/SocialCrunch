@@ -7,9 +7,9 @@ namespace Business
 {
     class TwitterComparer : IComparer<ITweet>
     {
-        private readonly int _favoriteWeight = 1;
-        private readonly int _retweetWeight = 2;
-        private readonly int _commentWeight = 4;
+        private readonly int _favoriteWeight;
+        private readonly int _retweetWeight;
+        private readonly int _commentWeight;
 
         public TwitterComparer() : this(1, 2, 4) { }
 

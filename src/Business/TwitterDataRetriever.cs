@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Models.Twitter;
 using Tweetinvi;
+using Tweetinvi.Logic;
 using Tweetinvi.Models;
 using TweetSharp;
 
@@ -18,8 +19,8 @@ namespace Business
     /// </summary>
     public class TwitterDataRetriever
     {
-        private TwitterService _twitter;
-        private IAuthenticatedUser _user;
+        private readonly TwitterService _twitter;
+        private readonly IAuthenticatedUser _user;
 
         private readonly string _token;
         private readonly string _tokenSecret;
@@ -32,7 +33,7 @@ namespace Business
             Auth.SetUserCredentials(consumerKey, consumerSecret, _token, _tokenSecret);
 
             _twitter = new TwitterService(token, tokenSecret);
-            _user = User.GetAuthenticatedUser();
+            _user = Tweetinvi.User.GetAuthenticatedUser();
         }
 
         public bool IsSameUser(string token, string tokenSecret)
@@ -80,12 +81,27 @@ namespace Business
             return new TwitterDailySummary(followers, friends, followings, tweets, likes);
         }
 
-        public IEnumerable<ITweet> GetBestTweets(int count = 3)
+        public IEnumerable<Models.Twitter.Tweet> GetBestTweets(IEnumerable<ITweet> timeline = null, int count = 3)
         {
-            var timeline = Timeline.GetUserTimeline(_user.Id, 2000)
-                .Where(x => x.TweetDTO.CreatedAt > DateTime.Now.Date);
+            if (timeline == null) timeline = GetDailyTimeLine();
 
-            return timeline.Where(x => x.IsRetweet).OrderByDescending(x => x, new TwitterComparer()).ToList().GetRange(0, count);
+            return timeline
+                .Where(x => x.IsRetweet)
+                .OrderByDescending(x => x, new TwitterComparer())
+                .ToList()
+                .GetRange(0, count)
+                .ConvertAll(x => new Models.Twitter.Tweet
+                {
+                    Id = x.Id,
+                    UserId = x.CreatedBy.Id,
+                    CreationDate = x.CreatedAt,
+                    Content = x.FullText,
+                    ReplyCount = x.ReplyCount.GetValueOrDefault(),
+                    QuoteCount = x.QuoteCount.GetValueOrDefault(),
+                    RetweetCount = x.RetweetCount,
+                    LikeCount = x.FavoriteCount,
+                    Url = x.Url
+                });
         }
 
         private IEnumerable<ITweet> GetTimeLine(int count = 2000) => Timeline.GetUserTimeline(_user.Id, count);

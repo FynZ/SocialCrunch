@@ -11,6 +11,38 @@ namespace Data.Twitter
     {
         public TwitterDataRepository(string connectionString) : base(connectionString) { }
 
+        public async Task<TwitterDailyData> GetDailyData(int userId, DateTime? day = null)
+        {
+            if (day == null) day = DateTime.Now;
+
+            using (var con = Connection)
+            {
+                const string sql =
+                    @"
+                    SELECT
+                        id          AS Id,
+                        followers   AS Followers,
+                        likes       AS Likes,
+                        retweets    AS Retweets,
+                        replies     AS Replies
+                    FROM
+                        t_twiter_data
+                    WHERE
+                        user_id = @userId
+                    AND
+                        date = @date
+                    ";
+
+                con.Open();
+
+                return await con.QueryFirstOrDefaultAsync<TwitterDailyData>(sql, new
+                {
+                    UserId = userId,
+                    Date = day.GetValueOrDefault().Date
+                });
+            }
+        }
+
         public async Task<bool> InsertDailyData(TwitterDailyData data, int userId)
         {
             using (var con = Connection)
@@ -20,21 +52,46 @@ namespace Data.Twitter
                     BEGIN
                         IF EXISTS
                         (
-                            SELECT 1
-                            FROM   t_twitter_data
-                            WHERE  user_id = @user_id
-                            AND    date > now()::date
+                            SELECT
+                                1
+                            FROM
+                                t_twitter_data
+                            WHERE
+                                user_id = @userId
+                            AND
+                                date > now()::date
                         )
                         THEN
-                            UPDATE t_twitter_data
-                            SET followers = @followers, likes = @likes, retweets = @retweets, replies = @replies
-                            WHERE user_id = user_id;
-                            AND date > now()::date;
+                            UPDATE 
+                                t_twitter_data
+                            SET 
+                                followers = @followers, 
+                                likes = @likes, 
+                                retweets = @retweets, 
+                                replies = @replies
+                            WHERE 
+                                user_id = user_id;
+                            AND 
+                                date > now()::date;
                         ELSE
-                            INSERT INTO public.t_twitter_data(
-                                user_id, date, followers, likes, retweets, replies)
+                            INSERT INTO public.t_twitter_data
+                            (
+                                user_id, 
+                                date, 
+                                followers, 
+                                likes, 
+                                retweets, 
+                                replies
+                            )
                             VALUES
-                                (@userId, CURRENT_TIMESTAMP, @followers, @likes, @retweets, @likes);
+                            (
+                                @userId, 
+                                CURRENT_TIMESTAMP, 
+                                @followers, 
+                                @likes, 
+                                @retweets, 
+                                @likes
+                            );
                         END IF;
                     END
                     $$;";
@@ -61,21 +118,49 @@ namespace Data.Twitter
                     BEGIN
                         IF EXISTS
                         (
-                            SELECT 1
-                            FROM   t_twitter_summary
-                            WHERE  user_id = @user_id
-                            AND    date > now()::date
+                            SELECT 
+                                1
+                            FROM
+                                t_twitter_summary
+                            WHERE
+                                user_id = @userId
+                            AND
+                                date > now()::date
                         )
                         THEN
-                            UPDATE t_twitter_data
-                            SET followers = @followers, followings = @followings, friends = @friends, tweets = @tweets, likes = @likes
-                            WHERE user_id = user_id;
-                            AND date > now()::date;
+                            UPDATE 
+                                t_twitter_data
+                            SET 
+                                followers = @followers,
+                                followings = @followings,
+                                friends = @friends,
+                                tweets = @tweets,
+                                likes = @likes
+                            WHERE
+                                user_id = user_id;
+                            AND
+                                date > now()::date;
                         ELSE
-                            INSERT INTO public.t_twitter_data(
-                                user_id, date, followers, followings, friends, tweets, likes)
+                            INSERT INTO public.t_twitter_data
+                            (
+                                user_id,
+                                date,
+                                followers,
+                                followings,
+                                friends,
+                                tweets,
+                                likes
+                            )
                             VALUES
-                                (@userId, CURRENT_TIMESTAMP, @followers, @followings, @friends, @tweets, @likes);
+                            (
+                                @userId,
+                                CURRENT_TIMESTAMP,
+                                @followers,
+                                @followings,
+                                @friends,
+                                @tweets,
+                                @likes
+                            );
                         END IF;
                     END
                     $$;";
@@ -92,6 +177,88 @@ namespace Data.Twitter
                     Likes = data.Likes,
                 }) != 0;
             }
+        }
+
+        public async Task<bool> InsertBestDailyTweets(IEnumerable<Tweet> tweets, int userId)
+        {
+            using (var con = Connection)
+            {
+                const string sql =
+                    @"DO $$                  
+                    BEGIN
+                        IF EXISTS
+                        (
+                            SELECT
+                                1
+                            FROM
+                                t_best_daily_tweets
+                            WHERE
+                                user_id = @userId
+                            AND
+                                date > now()::date
+                        )
+                        THEN
+                            DELETE
+                            FROM
+                                t_best_daily_tweets
+                            WHERE
+                                user_id = @userId
+                            AND
+                                date > now()::date
+                        END IF;
+
+                        INSERT INTO public.t_best_daily_tweets
+                        (
+                            tweet_id
+                            tweet_user_id, 
+                            creation_date,
+                            content, 
+                            reply_count, 
+                            quote_count, 
+                            retweet_count, 
+                            like_count,
+                            user_id
+                        )
+                        VALUES
+                        (
+                            @id
+                            @twitterUserId, 
+                            @creationDate, 
+                            @content, 
+                            @replyCount, 
+                            @quoteCount,
+                            @retweetCount, 
+                            @likeCount,
+                            @userId
+                        );
+                    END
+                    $$;";
+
+                con.Open();
+
+                foreach (var tweet in tweets)
+                {
+                    await con.ExecuteAsync(sql, new
+                    {
+                        Id = tweet.Id,
+                        TweeterUserId = tweet.UserId,
+                        CreationDate = tweet.CreationDate,
+                        Content = tweet.Content,
+                        ReplyCount = tweet.ReplyCount,
+                        QuoteCount = tweet.QuoteCount,
+                        RetweetCount = tweet.RetweetCount,
+                        LikeCount = tweet.LikeCount,
+                        UserId = userId
+                    });
+                }
+
+                return true;
+            }
+        }
+
+        public Task<bool> InsertBestTweets(IEnumerable<Tweet> tweets, int userId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

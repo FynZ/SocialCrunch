@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Models.Twitter;
 
 namespace Data.Twitter
@@ -7,5 +8,7 @@ namespace Data.Twitter
     {
         Task<bool> InsertDailyData(TwitterDailyData data, int userId);
         Task<bool> InsertDailySummary(TwitterDailySummary data, int userId);
+        Task<bool> InsertBestDailyTweets(IEnumerable<Tweet> tweets, int userId);
+        Task<bool> InsertBestTweets(IEnumerable<Tweet> tweets, int userId);
     }
 }
