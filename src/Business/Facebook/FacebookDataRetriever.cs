@@ -7,7 +7,7 @@ using Models.Facebook;
 
 namespace Business.Facebook
 {
-    public class FacebookDataRetriever
+    public class FacebookDataRetriever : IFacebookDataRetriever
     {
         private readonly FacebookClient _facebook;
         private readonly string _token;
@@ -41,6 +41,11 @@ namespace Business.Facebook
         public async Task<object> GetUserComments()
         {
             return await _facebook.GetTaskAsync($"me/comments?fields=id,created_time,from,like_count");
+        }
+
+        public Task<FacebookCompleteData> CollectData()
+        {
+            throw new NotImplementedException();
         }
     }
 }

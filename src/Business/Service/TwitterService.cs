@@ -14,13 +14,12 @@ namespace Business.Service
 {
     public class TwitterService : IService
     {
+        public SocialNetworkType Type { get; }
+        public bool Running { get; private set; }
+
         private readonly ITokenRepository _tokenRepository;
         private readonly ITwitterDataRepository _twitterDataRepository;
         private readonly IDataRetrieverFactory _factory;
-        private TwitterDataRetriever _twitterDataRetriever;
-
-        public SocialNetworkType Type { get; }
-        public bool Running { get; private set; }
 
         private readonly TimeSpan _workingDelay;
         private bool _forceStop = false;
@@ -118,25 +117,28 @@ namespace Business.Service
         {
             try
             {
-                _twitterDataRetriever = _factory.GetTwitterDataRetriever(token.AccessToken, token.TokenSecret);
+                var twitterDataRetriever = _factory.GetTwitterDataRetriever(token.AccessToken, token.TokenSecret);
 
-                var dailyData = await _twitterDataRetriever.GetDailyAnalytics();
+                var gatheredData = await twitterDataRetriever.CollectData();
+
                 var previousRun = await _twitterDataRepository.GetDailyData(token.UserId, DateTime.Now.AddDays(-1));
 
                 // if we have data from the previous day, we get the difference, else it's the value of today
-                dailyData.Followers = previousRun != null
-                    ? _twitterDataRetriever.User.FollowersCount - previousRun.Followers
-                    : _twitterDataRetriever.User.FollowersCount;
+                gatheredData.TwitterDailyData.Followers = previousRun != null
+                    ? twitterDataRetriever.User.FollowersCount - previousRun.Followers
+                    : twitterDataRetriever.User.FollowersCount;
 
-                await _twitterDataRepository.InsertDailyData(token.UserId, dailyData);
-
-
+                await _twitterDataRepository.InsertDailyData(token.UserId, gatheredData.TwitterDailyData);
                 Log.Information($"Daily data inserted for user {token.UserId}");
 
-                var dailySummary = _twitterDataRetriever.GetDailySummary();
-                await _twitterDataRepository.InsertDailySummary(token.UserId, dailySummary);
-
+                await _twitterDataRepository.InsertDailySummary(token.UserId, gatheredData.TwitterDailySummary);
                 Log.Information($"Daily summary inserted for user {token.UserId}");
+
+                await _twitterDataRepository.InsertBestDailyTweets(token.UserId, gatheredData.BestDailyTweets);
+                Log.Information($"Best daily tweets inserted for user {token.UserId}");
+
+                await _twitterDataRepository.InsertBestTweets(token.UserId, gatheredData.BestAllTimeTweets);
+                Log.Information($"Best all time tweets inserted for user {token.UserId}");
             }
             catch (Exception e)
             {

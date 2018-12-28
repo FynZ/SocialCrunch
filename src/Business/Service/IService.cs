@@ -5,7 +5,7 @@ using Models.Enums;
 
 namespace Business.Service
 {
-    interface IService
+    public interface IService
     {
         SocialNetworkType Type { get; }
         bool Running { get; }

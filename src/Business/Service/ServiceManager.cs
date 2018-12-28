@@ -12,35 +12,6 @@ namespace Business.Service
 {
     public class ServiceManager : IServiceManager
     {
-        #region SingletonImplementation
-        //private static volatile Service INSTANCE;
-        //private static readonly object Locker = new object();
-
-        //protected Service() { }
-
-        //public static Service GetService()
-        //{
-        //    if (INSTANCE != null)
-        //    {
-        //        return INSTANCE;
-        //    }
-
-        //    lock (Locker)
-        //    {
-        //        if (INSTANCE != null)
-        //        {
-        //            return INSTANCE;
-        //        }
-
-        //        var instance = new Service();
-
-        //        INSTANCE = instance;
-
-        //        return INSTANCE;
-        //    }
-        //}
-        #endregion SingletonImplementation
-
         private readonly Dictionary<SocialNetworkType, IService> _services;
 
         public ServiceManager(TwitterService twitterService, FacebookService facebookService)

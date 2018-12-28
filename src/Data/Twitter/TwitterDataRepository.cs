@@ -268,9 +268,79 @@ namespace Data.Twitter
             }
         }
 
-        public Task<bool> InsertBestTweets(int userId, IEnumerable<Tweet> tweets)
+        public async Task<bool> InsertBestTweets(int userId, IEnumerable<Tweet> tweets)
         {
-            throw new NotImplementedException();
+            using (var con = Connection)
+            {
+                const string sql =
+                    @"DO $$                  
+                    BEGIN
+                        IF EXISTS
+                        (
+                            SELECT
+                                1
+                            FROM
+                                t_best_tweets
+                            WHERE
+                                user_id = @userId
+                        )
+                        THEN
+                            DELETE
+                            FROM
+                                t_best_tweets
+                            WHERE
+                                user_id = @userId
+                        END IF;
+
+                        INSERT INTO public.t_best_tweets
+                        (
+                            user_id
+                            tweet_id,
+                            tweet_user_id, 
+                            creation_date,
+                            content, 
+                            reply_count, 
+                            quote_count, 
+                            retweet_count, 
+                            like_count
+                        )
+                        VALUES
+                        (
+                            @userId
+                            @date,
+                            @tweetId,
+                            @tweetUserId, 
+                            @creationDate, 
+                            @content, 
+                            @replyCount, 
+                            @quoteCount,
+                            @retweetCount, 
+                            @likeCount
+                        );
+                    END
+                    $$;";
+
+                con.Open();
+
+                foreach (var tweet in tweets)
+                {
+                    await con.ExecuteAsync(sql, new
+                    {
+                        UserId = userId,
+                        TweetId = tweet.Id,
+                        TweetUserId = tweet.UserId,
+                        CreationDate = tweet.CreationDate,
+                        Content = tweet.Content,
+                        ReplyCount = tweet.ReplyCount,
+                        QuoteCount = tweet.QuoteCount,
+                        RetweetCount = tweet.RetweetCount,
+                        LikeCount = tweet.LikeCount,
+
+                    });
+                }
+
+                return true;
+            }
         }
     }
 }
