@@ -23,19 +23,19 @@ namespace Business.Facebook
             return String.CompareOrdinal(token, _token) == 0;
         }
 
-        public FacebookUser GetProfile()
+        public async Task<FacebookUser> GetProfile()
         {
-            return _facebook.Get<FacebookUser>("me?fields=about,id,address,age_range,birthday,education,email,favorite_teams,first_name,gender,hometown,last_name,location,middle_name,name");
+            return await _facebook.GetTaskAsync<FacebookUser>("me?fields=about,id,address,age_range,birthday,education,email,favorite_teams,first_name,gender,hometown,last_name,location,middle_name,name");
         }
 
-        public object GetFeed()
+        public async Task<object> GetFeed()
         {
-            return _facebook.Get("me/feed");
+            return await _facebook.GetTaskAsync("me/feed");
         }
 
-        public object GetPostDetails(int postId)
+        public async Task<object> GetPostDetails(int postId)
         {
-            return _facebook.Get($"{postId}?fields=shares,likes.summary(true),comments.summary(true)");
+            return await _facebook.GetTaskAsync($"{postId}?fields=shares,likes.summary(true),comments.summary(true)");
         }
 
         public async Task<object> GetUserComments()
@@ -43,7 +43,7 @@ namespace Business.Facebook
             return await _facebook.GetTaskAsync($"me/comments?fields=id,created_time,from,like_count");
         }
 
-        public Task<FacebookCompleteData> CollectData()
+        public async Task<FacebookCompleteData> CollectData()
         {
             throw new NotImplementedException();
         }

@@ -103,13 +103,18 @@ namespace Business.Service
                     }
                     else
                     {
-                        Running = false;
+                        break;
                     }
                 }
+
+                Running = false;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Log.Fatal($"Unhandled error in loop for service {Type} with exception {e.Message}", e);
+                Log.Fatal(ex, $"Unhandled error in loop for service {Type} with exception {ex.Message}");
+
+                Running = false;
+                _forceStop = false;
             }
         }
 
@@ -117,33 +122,46 @@ namespace Business.Service
         {
             try
             {
-                var twitterDataRetriever = _factory.GetTwitterDataRetriever(token.AccessToken, token.TokenSecret);
+                var twitterDataRetriever = _factory.GetTwitterCollector(token.AccessToken, token.TokenSecret);
 
                 var gatheredData = await twitterDataRetriever.CollectData();
 
-                var previousRun = await _twitterDataRepository.GetDailyData(token.UserId, DateTime.Now.AddDays(-1));
 
-                // if we have data from the previous day, we get the difference, else it's the value of today
-                gatheredData.TwitterDailyData.Followers = previousRun != null
-                    ? twitterDataRetriever.User.FollowersCount - previousRun.Followers
-                    : twitterDataRetriever.User.FollowersCount;
-
-                await _twitterDataRepository.InsertDailyData(token.UserId, gatheredData.TwitterDailyData);
-                Log.Information($"Daily data inserted for user {token.UserId}");
-
+                // cumulated numbers
                 await _twitterDataRepository.InsertDailySummary(token.UserId, gatheredData.TwitterDailySummary);
                 Log.Information($"Daily summary inserted for user {token.UserId}");
 
+                // activity of the day
+                gatheredData.TwitterDailyData.Followers = await CalculateFollowerGain(token, gatheredData.TwitterDailySummary.Followers);
+                await _twitterDataRepository.InsertDailyData(token.UserId, gatheredData.TwitterDailyData);
+                Log.Information($"Daily data inserted for user {token.UserId}");
+
+                // best tweets of the day
                 await _twitterDataRepository.InsertBestDailyTweets(token.UserId, gatheredData.BestDailyTweets);
                 Log.Information($"Best daily tweets inserted for user {token.UserId}");
 
+                // best all time tweetss
                 await _twitterDataRepository.InsertBestTweets(token.UserId, gatheredData.BestAllTimeTweets);
                 Log.Information($"Best all time tweets inserted for user {token.UserId}");
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Log.Error($"An error occured when gathering data for user {token.UserId} with exception {e.Message}", e);
+                Log.Error(ex, $"An error occured when gathering data for user {token.UserId} with exception {ex.Message}");
             }
+        }
+
+        private async Task<int> CalculateFollowerGain(SocialToken token, int totalFollowers)
+        {
+            var previousRun = await _twitterDataRepository.GetDailyData(token.UserId, DateTime.Now.AddDays(-1));
+
+            // if we have data from the previous day, we get the difference, else it's the value of today
+
+            // keeping this in case of because i'm not sure Resharper is right on this one
+            //return previousRun != null
+            //    ? totalFollowers - previousRun.Followers
+            //    : totalFollowers;
+
+            return totalFollowers - previousRun?.Followers ?? totalFollowers;
         }
     }
 }

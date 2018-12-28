@@ -25,8 +25,10 @@ namespace SocialCrunch.Configuration.DependencyInjection
 
         public static IServiceCollection InjectServices(this IServiceCollection services)
         {
-            services.AddSingleton<TwitterDataRetriever, TwitterDataRetriever>();
-            services.AddSingleton<FacebookDataRetriever, FacebookDataRetriever>();
+            services.AddSingleton<ITwitterDataRetriever, TwitterDataRetriever>();
+            services.AddSingleton<IFacebookDataRetriever, FacebookDataRetriever>();
+
+            services.AddSingleton<IDataRetrieverFactory, DataRetrieverFactory>();
 
             services.AddSingleton<TwitterService, TwitterService>();
             services.AddSingleton<FacebookService, FacebookService>();

@@ -4,6 +4,8 @@ using System.Text;
 using Business.Facebook;
 using Business.Twitter;
 using Microsoft.Extensions.Configuration;
+using Models.Facebook;
+using Models.Twitter;
 
 namespace Business
 {
@@ -15,8 +17,8 @@ namespace Business
         private readonly object _twitterLock = new object();
         private readonly object _facebookLock = new object();
 
-        private TwitterDataRetriever _twitterDataRetrieverCachedInstance;
-        private FacebookDataRetriever _facebookDataRetrieverCachedInsstance;
+        private ITwitterDataRetriever _twitterDataRetrieverCachedInstance;
+        private IFacebookDataRetriever _facebookDataRetrieverCachedInsstance;
 
         public DataRetrieverFactory(IConfiguration configuration)
         {
@@ -24,7 +26,7 @@ namespace Business
             _twitterConsumerSecret = configuration["TwitterConsumerSecret"] ?? "aM4hsNAWLgn7jAMDKwYMJY2oCfKNVpXnkTYia1bel87bV34Jbp";
         }
 
-        public TwitterDataRetriever GetTwitterDataRetriever(string token, string tokenSecret)
+        public ITwitterDataRetriever GetTwitterDataRetriever(string token, string tokenSecret)
         {
             if (_twitterDataRetrieverCachedInstance == null || 
                 !_twitterDataRetrieverCachedInstance.IsSameUser(token, tokenSecret))
@@ -39,7 +41,7 @@ namespace Business
             return _twitterDataRetrieverCachedInstance;
         }
 
-        public FacebookDataRetriever GetFacebookDataRetriever(string token)
+        public IFacebookDataRetriever GetFacebookDataRetriever(string token)
         {
             if (_facebookDataRetrieverCachedInsstance == null ||
                 !_facebookDataRetrieverCachedInsstance.IsSameUser(token))
@@ -52,6 +54,16 @@ namespace Business
             }
 
             return _facebookDataRetrieverCachedInsstance;
+        }
+
+        public IDailyCollect<TwitterCompleteData> GetTwitterCollector(string token, string tokenSecret)
+        {
+            return GetTwitterDataRetriever(token, tokenSecret);
+        }
+
+        public IDailyCollect<FacebookCompleteData> GetFacebookCollector(string token)
+        {
+            return GetFacebookDataRetriever(token);
         }
     }
 }
